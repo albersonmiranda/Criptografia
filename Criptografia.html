@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Congruência e Criptografia</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Alberson Miranda" />
+    <meta name="date" content="2021-08-21" />
+    <script src="Criptografia_files/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Congruência e Criptografia
+## implementação básica
+### Alberson Miranda
+### 2021-08-21
+
+---
+
+
+
+
+
+
+## O que é criptografia?
+
+.pull-left[
+  Do grego _kriptós_ (oculto, secreto) e _gráphein_ (escrita), criptografia é a ciência das técnicas de codificação e decodificação de informações.
+
+  ### Ao longo da história
+
+  O documento encriptado mais antigo que se tem registro data do século I AD, utilizado pelos militares no império romano de Júlio César.
+]
+
+.pull-right[
+  &lt;div class="figure" style="text-align: center"&gt;
+  &lt;p class="caption"&gt;fig. 1: Cifra de César&lt;/p&gt;&lt;img src="img/cifra.jpg" alt="fig. 1: Cifra de César" width="90%" /&gt;&lt;/div&gt;
+]
+
+---
+
+### Ao longo da história
+
+.pull-left[
+  A invenção do computador está associada com criptografia. Durante a II Guerra Mundial, o primeiro computador foi desenvolvido para decriptar as comunicações nazistas codificadas através da _Enigma_.
+
+  As mensagens geradas pela _Enigma_ eram encriptadas com uma chave que mudava diariamente.
+]
+
+.pull-right[
+  &lt;div class="figure" style="text-align: center"&gt;
+  &lt;img src="img/enigma.jpg" alt="fig. 2: Enigma" width="100%" /&gt;
+  &lt;p class="caption"&gt;fig. 2: Enigma&lt;/p&gt;
+  &lt;/div&gt;
+]
+
+---
+class: inverse center middle
+
+# ALGORITMOS DE CRIPTOGRAFIA
+---
+
+## Criptografia de Chave Simétrica
+
+Nos algoritmos de chave simétrica, há apenas uma chave comum usada para trancar e destrancar a "caixa" de encriptação e tanto o remetente quanto o destinatário têm a mesma chave.
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="img/simetrica.png" alt="fig. 3: Encriptação simétrica" width="70%" /&gt;
+&lt;p class="caption"&gt;fig. 3: Encriptação simétrica&lt;/p&gt;
+&lt;/div&gt;
+---
+  
+### Onde é usado?
+
+- _Enigma_ (II GM)
+- armazenamento de dados
+- onde velocidade é importante (e.g., transações de cartão de crédito)
+
+### Riscos
+
+Como há uma única chave, ela deve ser compartilhada. Se o canal onde a chave é transmitida for comprometido e a chave for interceptada, a terceira parte poderá decifrar o texto.
+
+---
+
+## Criptografia de Chave Assimétrica
+
+Nos algoritmos de chave assimétrica, apenas o receptor detém a chave. O receptor envia publicamente uma fechadura — o método de cifragem para trancar essa caixa hipotética —, para a qual apenas o receptor possui a chave. A fechadura é chamada de **chave pública** e a chave é chamada de **chave privada**, existindo apenas uma chave pública para cada chave privada.
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="img/assimetrica.png" alt="fig. 4: Encriptação assimétrica" width="65%" /&gt;
+&lt;p class="caption"&gt;fig. 4: Encriptação assimétrica&lt;/p&gt;
+&lt;/div&gt;
+
+---
+  
+### Onde é usado?
+
+- verificação de identidade (e.g., assinatura digital, blockchain, apps de chat)
+- onde segurança é importante
+
+### Riscos
+
+A criptografia assimétrica oferece melhor segurança porque usa duas chaves diferentes - uma chave pública que só é usada para criptografar mensagens, tornando-a segura para qualquer pessoa, e uma chave privada para descriptografar mensagens que nunca precisam ser compartilhadas.
+
+- a chave privada nunca precisa ser compartilhada
+- garante que apenas o destinatário pretendido possa descriptografar as mensagens codificadas e criar uma assinatura digital à prova de violação. 
+
+---
+
+class: inverse center middle
+
+# CRIPTOGRAFIA E TEORIA DOS NÚMEROS
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+Primeiramente, o receptor gera duas chaves públicas `\(n\)` e `\(e\)`, e uma chave privada `\(d\)` da seguinte forma:
+
+1. escolhe dois números primos `\(p\)` e `\(q\)` muito grandes, tal que `\(n=p*q\)`
+
+---
+  
+### 1º problema: achar números primos
+
+Solução: **Crivo de Eratóstenes**
+
+
+```r
+crivo = function(n) {
+
+  # garantir que n é inteiro
+  n = as.integer(n)
+  
+  # criando lista de primos de 1 até n supondo todos verdadeiros
+  primos = rep(TRUE, n)
+
+  # definindo 1 como não primo
+  primos[1] = FALSE
+
+  # definindo 2 como último primo
+  ultimo_primo = 2L
+
+  # determinando maior número a ser checado
+  raiz_arredondada = floor(sqrt(n))
+
+  # iterar
+  while (ultimo_primo &lt;= raiz_arredondada) {
+    # retirando todos múltiplos do maior primo
+    primos[seq.int(2L * ultimo_primo, n, ultimo_primo)] = FALSE
+    # definindo o próximo maior primo
+    sel = which(primos[(ultimo_primo + 1):(raiz_arredondada + 1)])
+    if (any(sel)) {
+      ultimo_primo = ultimo_primo + min(sel)
+    } else {
+      ultimo_primo = raiz_arredondada + 1
+    }
+  }
+
+  # obter primos
+  which(primos)
+}
+```
+
+```r
+# obtendo os primos até 1000
+crivo(1000)
+```
+
+```
+##   [1]   2   3   5   7  11  13  17  19  23  29  31  37  41  43  47  53  59  61  67  71  73  79  83  89  97 101 103 107 109 113 127 131 137 139 149 151 157 163 167 173 179 181 191 193 197 199 211 223 227 229 233 239 241
+##  [54] 251 257 263 269 271 277 281 283 293 307 311 313 317 331 337 347 349 353 359 367 373 379 383 389 397 401 409 419 421 431 433 439 443 449 457 461 463 467 479 487 491 499 503 509 521 523 541 547 557 563 569 571 577
+## [107] 587 593 599 601 607 613 617 619 631 641 643 647 653 659 661 673 677 683 691 701 709 719 727 733 739 743 751 757 761 769 773 787 797 809 811 821 823 827 829 839 853 857 859 863 877 881 883 887 907 911 919 929 937
+## [160] 941 947 953 967 971 977 983 991 997
+```
+
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+Primeiramente, o receptor gera duas chaves públicas `\(n\)` e `\(e\)`, e uma chave privada `\(d\)` da seguinte forma:
+
+1. escolhe dois números primos `\(p\)` e `\(q\)` muito grandes, tal que `\(n=p*q\)`&lt;sup&gt;1&lt;/1&gt;
+
+
+```r
+library(openssl)
+
+p = bignum("883")
+q = bignum("991")
+n = p * q
+
+print(n)
+```
+
+```
+## [b] 875053
+```
+
+.footnote[
+  [1] Normalmente esses números possuem mais de 100 dígitos mas, para facilitar a visualização, utilizarei números pequenos.
+]
+
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+&lt;ol start=2&gt;
+&lt;li&gt; escolhe outro número primo `\(e\)`, tal que `\(3&lt; e &lt; n-1\)`
+
+
+```r
+library(openssl)
+
+p = bignum("883")
+q = bignum("991")
+n = p * q
+
+e = bignum("65537")
+```
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

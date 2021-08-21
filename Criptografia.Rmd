@@ -1,0 +1,222 @@
+---
+title: "Congruência e Criptografia"
+subtitle: "implementação básica"  
+author: 
+  - "Alberson Miranda"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    css: ["xaringan-themer.css", "custom.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#56af31",
+  secondary_color = "#56af31",
+  inverse_header_color = "#FFFFFF"
+)
+```
+
+## O que é criptografia?
+
+.pull-left[
+  Do grego _kriptós_ (oculto, secreto) e _gráphein_ (escrita), criptografia é a ciência das técnicas de codificação e decodificação de informações.
+
+  ### Ao longo da história
+
+  O documento encriptado mais antigo que se tem registro data do século I AD, utilizado pelos militares no império romano de Júlio César.
+]
+
+.pull-right[
+  ```{r, echo = FALSE, fig.cap = "fig. 1: Cifra de César", fig.topcaption = TRUE, fig.align = "center", out.width = "90%"}
+  knitr::include_graphics("img/cifra.jpg")
+  ```
+]
+
+---
+
+### Ao longo da história
+
+.pull-left[
+  A invenção do computador está associada com criptografia. Durante a II Guerra Mundial, o primeiro computador foi desenvolvido para decriptar as comunicações nazistas codificadas através da _Enigma_.
+
+  As mensagens geradas pela _Enigma_ eram encriptadas com uma chave que mudava diariamente.
+]
+
+.pull-right[
+  ```{r, echo = FALSE, fig.cap = "fig. 2: Enigma", fig.align = "center"}
+  knitr::include_graphics("img/enigma.jpg")
+  ```
+]
+
+---
+class: inverse center middle
+
+# ALGORITMOS DE CRIPTOGRAFIA
+---
+
+## Criptografia de Chave Simétrica
+
+Nos algoritmos de chave simétrica, há apenas uma chave comum usada para trancar e destrancar a "caixa" de encriptação e tanto o remetente quanto o destinatário têm a mesma chave.
+
+```{r, echo = FALSE, fig.cap = "fig. 3: Encriptação simétrica", fig.align = "center", out.width = "70%"}
+
+knitr::include_graphics("img/simetrica.png")
+```
+---
+  
+### Onde é usado?
+
+- _Enigma_ (II GM)
+- armazenamento de dados
+- onde velocidade é importante (e.g., transações de cartão de crédito)
+
+### Riscos
+
+Como há uma única chave, ela deve ser compartilhada. Se o canal onde a chave é transmitida for comprometido e a chave for interceptada, a terceira parte poderá decifrar o texto.
+
+---
+
+## Criptografia de Chave Assimétrica
+
+Nos algoritmos de chave assimétrica, apenas o receptor detém a chave. O receptor envia publicamente uma fechadura — o método de cifragem para trancar essa caixa hipotética —, para a qual apenas o receptor possui a chave. A fechadura é chamada de **chave pública** e a chave é chamada de **chave privada**, existindo apenas uma chave pública para cada chave privada.
+
+```{r, echo = FALSE, fig.cap = "fig. 4: Encriptação assimétrica", fig.align = "center", out.width = "65%"}
+
+knitr::include_graphics("img/assimetrica.png")
+```
+
+---
+  
+### Onde é usado?
+
+- verificação de identidade (e.g., assinatura digital, blockchain, apps de chat)
+- onde segurança é importante
+
+### Riscos
+
+A criptografia assimétrica oferece melhor segurança porque usa duas chaves diferentes - uma chave pública que só é usada para criptografar mensagens, tornando-a segura para qualquer pessoa, e uma chave privada para descriptografar mensagens que nunca precisam ser compartilhadas.
+
+- a chave privada nunca precisa ser compartilhada
+- garante que apenas o destinatário pretendido possa descriptografar as mensagens codificadas e criar uma assinatura digital à prova de violação. 
+
+---
+
+class: inverse center middle
+
+# CRIPTOGRAFIA E TEORIA DOS NÚMEROS
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+Primeiramente, o receptor gera duas chaves públicas $n$ e $e$, e uma chave privada $d$ da seguinte forma:
+
+1. escolhe dois números primos $p$ e $q$ muito grandes, tal que $n=p*q$
+
+---
+  
+### 1º problema: achar números primos
+
+Solução: **Crivo de Eratóstenes**
+
+```{r}
+crivo = function(n) {
+
+  # garantir que n é inteiro
+  n = as.integer(n)
+  
+  # criando lista de primos de 1 até n supondo todos verdadeiros
+  primos = rep(TRUE, n)
+
+  # definindo 1 como não primo
+  primos[1] = FALSE
+
+  # definindo 2 como último primo
+  ultimo_primo = 2L
+
+  # determinando maior número a ser checado
+  raiz_arredondada = floor(sqrt(n))
+
+  # iterar
+  while (ultimo_primo <= raiz_arredondada) {
+    # retirando todos múltiplos do maior primo
+    primos[seq.int(2L * ultimo_primo, n, ultimo_primo)] = FALSE
+    # definindo o próximo maior primo
+    sel = which(primos[(ultimo_primo + 1):(raiz_arredondada + 1)])
+    if (any(sel)) {
+      ultimo_primo = ultimo_primo + min(sel)
+    } else {
+      ultimo_primo = raiz_arredondada + 1
+    }
+  }
+
+  # obter primos
+  which(primos)
+}
+
+```
+```{r}
+# obtendo os primos até 1000
+crivo(1000)
+```
+
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+Primeiramente, o receptor gera duas chaves públicas $n$ e $e$, e uma chave privada $d$ da seguinte forma:
+
+1. escolhe dois números primos $p$ e $q$ muito grandes, tal que $n=p*q$<sup>1</1>
+
+```{r}
+library(openssl)
+
+p = bignum("883")
+q = bignum("991")
+n = p * q
+
+print(n)
+```
+
+.footnote[
+  [1] Normalmente esses números possuem mais de 100 dígitos mas, para facilitar a visualização, utilizarei números pequenos.
+]
+
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+<ol start=2>
+<li> escolhe outro número primo $e$, tal que $3< e < n-1$
+
+```{r}
+library(openssl)
+
+p = bignum("883")
+q = bignum("991")
+n = p * q
+
+e = bignum("65537")
+```
+
+---
