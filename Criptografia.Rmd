@@ -283,7 +283,7 @@ crivo = function(n) {
 
   # garantir que n é inteiro
   n = as.integer(n)
-  
+
   # criando lista de primos de 1 até n supondo todos verdadeiros
   primos = rep(TRUE, n)
 
@@ -424,7 +424,7 @@ De forma programática:
 ```{r}
 
 encriptar = function(mensagem, p, q, e) {
-  
+
   if (!is.character(c(mensagem, p, q, e))) {
     stop("os argumentos devem ser caracteres")
   }
@@ -448,7 +448,6 @@ encriptar = function(mensagem, p, q, e) {
   d = openssl::bignum_mod_inv(e, euler)
   print(paste("chave privada:", d))
 
-  # encriptar: mensagem^e %% n = 1
   mensagem = openssl::bignum(charToRaw(mensagem))
   mensagem_encriptada = openssl::bignum_mod_exp(mensagem, e, n)
   mensagem_base64 = openssl::base64_encode(mensagem_encriptada)
