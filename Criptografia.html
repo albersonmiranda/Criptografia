@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Congruência e Criptografia</title>
+    <title>Teoria dos Números</title>
     <meta charset="utf-8" />
     <meta name="author" content="Alberson Miranda" />
-    <meta name="date" content="2021-08-21" />
+    <meta name="date" content="2021-08-23" />
     <script src="Criptografia_files/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
     <link rel="stylesheet" href="custom.css" type="text/css" />
@@ -13,10 +13,10 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Congruência e Criptografia
-## implementação básica
+# Teoria dos Números
+## congruência e criptografia
 ### Alberson Miranda
-### 2021-08-21
+### 2021-08-23
 
 ---
 
@@ -112,20 +112,130 @@ A criptografia assimétrica oferece melhor segurança porque usa duas chaves dif
 
 class: inverse center middle
 
-# CRIPTOGRAFIA E TEORIA DOS NÚMEROS
+# CRIPTOGRAFIA E TEORIA DOS NÚMEROS &lt;br&gt; CIFRA DE CÉSAR
 ---
-  
+## Implementação da Cifra de César
+
+Cada letra é associada a um número:
+
+
+|        |   |   |   |   |   |   |   |   |   |   |   |   |   |
+|:-------|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|letras  |A  |B  |C  |D  |E  |F  |G  |H  |I  |J  |K  |L  |M  |
+|numeros |1  |2  |3  |4  |5  |6  |7  |8  |9  |10 |11 |12 |13 |
+
+&lt;br&gt;
+
+
+|        |   |   |   |   |   |   |   |   |   |   |   |   |   |
+|:-------|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|letras  |N  |O  |P  |Q  |R  |S  |T  |U  |V  |W  |X  |Y  |Z  |
+|numeros |14 |15 |16 |17 |18 |19 |20 |21 |22 |23 |24 |25 |26 |
+
+A palavra IFES, por exemplo, ficaria:
+`$$\text{IFES} = 9\;6\;5\;19$$`
+
+---
+
+## Implementação da Cifra de César
+
+Escolhemos então um número `\(b\)` qualquer para deslocar as letras. Tomando `\(b=3\)`, por exemplo:
+
+
+|        |   |   |   |   |   |   |   |   |   |   |   |   |   |
+|:-------|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|letras  |A  |B  |C  |D  |E  |F  |G  |H  |I  |J  |K  |L  |M  |
+|numeros |1  |2  |3  |4  |5  |6  |7  |8  |9  |10 |11 |12 |13 |
+
+&lt;br&gt;
+
+
+|        |   |   |   |   |   |   |   |   |   |   |   |   |   |
+|:-------|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|letras  |N  |O  |P  |Q  |R  |S  |T  |U  |V  |W  |X  |Y  |Z  |
+|numeros |14 |15 |16 |17 |18 |19 |20 |21 |22 |23 |24 |25 |26 |
+
+E a palavra IFES codificada fica:
+`$$12\;9\;8\;22 = \text{LIHV}$$`
+---
+## Implementação da Cifra de César
+
+Esse é um caso de chave simétrica. `\(b\)` deve ser compartilhado com o receptador de forma que ele pudesse realizar a operação inversa para retornar à mensagem original:
+
+$$
+`\begin{aligned}
+\text{LIHV} = 12\;9\;8\;22 \\
+(-3) \\
+\text{IFES} = 9\;6\;5\;19
+\end{aligned}`
+$$
+
+Descrevendo matematicamente, 
+$$
+C \equiv P + b\; (\text{mod 26})
+$$
+
+Sendo `\(C\)` o código numérico do texto cifrado, `\(P\)` o código numérico do texto original e `\(b\)` a chave.
+
+---
+
+class: inverse center middle
+
+# CRIPTOGRAFIA E TEORIA DOS NÚMEROS &lt;br&gt; CRIPTOGRAFIA RSA
+
+---
 ## Implementação de Algoritmo de Chave Assimétrica
 
-Primeiramente, o receptor gera duas chaves públicas `\(n\)` e `\(e\)`, e uma chave privada `\(d\)` da seguinte forma:
+Assim como na Cifra de César, começamos por transformar a mensagem em números:
 
-1. escolhe dois números primos `\(p\)` e `\(q\)` muito grandes, tal que `\(n=p*q\)`
+
+|        |   |   |   |   |   |   |   |   |   |   |   |   |   |
+|:-------|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|letras  |A  |B  |C  |D  |E  |F  |G  |H  |I  |J  |K  |L  |M  |
+|numeros |10 |11 |12 |13 |14 |15 |16 |17 |18 |19 |20 |21 |22 |
+
+&lt;br&gt;
+
+
+|        |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+|:-------|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+|letras  |N  |O  |P  |Q  |R  |S  |T  |U  |V  |W  |X  |Y  |Z  |   |
+|numeros |23 |24 |25 |26 |27 |28 |29 |30 |31 |32 |33 |34 |35 |99 |
+&lt;br&gt;&lt;br&gt;
+`$$\text{TEORIA DOS NUMEROS} = 29\;14\;24\;27\;18\;10\;99\;13\;24\;28\;99\;23\;30\;22\;14\;27\;24\;28$$`
+
+---
+## Implementação de Algoritmo de Chave Assimétrica
+
+- Para encurtar as mensagens, utiliza-se conversão binário-texto&lt;sup&gt;1&lt;/sup&gt;
+
+
+```r
+mensagem = bignum("291424271810991324289923302214272428")
+mensagem_base64 = base64_encode(mensagem)
+mensagem_base64
+```
+
+```
+## [1] "OCBTcBVvkyuloL66hwWs"
+```
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt; não faz parte do processo matemático de encriptação]
+---
+## Implementação de Algoritmo de Chave Assimétrica
+
+Com a mensagem pronta, o remetente gera duas chaves públicas `\(n\)` e `\(e\)` e uma chave privada `\(d\)` da seguinte forma:
+
+1. escolhe dois números primos `\(p\)` e `\(q\)` muito grandes, tal que `\(n=p*q\)`, pois
+`$$\phi(n) = \phi(pq) = \phi(p)\phi(q)=(p-1)(q-1)$$`
+2. escolhe outro número primo `\(e\)`, tal que `\(e\)` seja inversível módulo `\(\phi(n)\)` pois este será usado no processo de decodificação
+
 
 ---
   
 ### 1º problema: achar números primos
 
-Solução: **Crivo de Eratóstenes**
+Solução: **Crivo de Eratóstenes** (Hefez, Abramo [Hef93], p. 88)
 
 
 ```r
@@ -178,50 +288,205 @@ crivo(1000)
 
 ---
   
-## Implementação de Algoritmo de Chave Assimétrica
+### 1º problema: achar números primos
 
-Primeiramente, o receptor gera duas chaves públicas `\(n\)` e `\(e\)`, e uma chave privada `\(d\)` da seguinte forma:
-
-1. escolhe dois números primos `\(p\)` e `\(q\)` muito grandes, tal que `\(n=p*q\)`&lt;sup&gt;1&lt;/1&gt;
+Tempo de executação para encontrar `\(10^6\)` primos:
 
 
 ```r
-library(openssl)
+inicio = Sys.time()
+n1 = crivo(1e+06)
+fim = Sys.time()
 
-p = bignum("883")
-q = bignum("991")
-n = p * q
-
-print(n)
+fim - inicio
 ```
 
 ```
-## [b] 875053
+## Time difference of 0.02000093 secs
 ```
 
-.footnote[
-  [1] Normalmente esses números possuem mais de 100 dígitos mas, para facilitar a visualização, utilizarei números pequenos.
-]
+---
+  
+### 1º problema: achar números primos
+
+Tempo de executação para encontrar `\(10^9\)` primos:
+
+
+```r
+inicio = Sys.time()
+n2 = crivo(1e+09)
+fim = Sys.time()
+
+fim - inicio
+```
+
+```
+## Time difference of 3.497244 mins
+```
+---
+  
+### 1º problema: achar números primos
+
+- Tempo de processamento para encontrar os primos até `\(10^9\)` é 2,1 mil vezes maior do que para encontrar os primos até `\(10^6\)`
+- Seguindo a mesma proporção, levaria 47,3 horas para encontrar os primos até `\(10^{12}\)`
+- Normalmente são utilizados números maiores que `\(10^{100}\)` e a busca por primos maiores é contínua
+---
+### 2º problema: garantir a possibilidade de decodificação
+
+- Para que seja possível a decodificação, `\(e\)` deve ser inversível módulo `\(\phi(n)\)`, ou seja, `\(mdc(e, \phi(n)) = 1\)`.
+
+**Relembrando (Hefez, Abramo [Hef93], p. 118-121):**
+- o conjunto de todas as classes residuais módulo `\(m\)` é representado por `\(\mathbb{Z}_m\)`
+- a vantagem das classes residuais é que transformam a congruência `\(a \equiv b \;(mod \;m)\)` na igualdade `\(\bar{a} = \bar{b}\)` e podemos realizar operações com essas classes
+- um elemento `\(\bar{a} \in \mathbb{Z}_m\)` é invertível se e somente se `\((a,m) = 1\)`
+- se `\(\bar{a}\)` é invertível, então existe `\(\bar{b} \in \mathbb{Z}\)` tal que `\(\bar{1}=\bar{a}.\bar{b}\)`, logo `\(a.b \equiv 1 \;(mod \;m)\)`
+---
+### 2º problema: garantir a possibilidade de decodificação
+
+- conseguimos ver pela tabela de multiplicação que isso ocorre `\(\forall \;\bar{a} \in \mathbb{Z}_m\)` apenas se `\(m\)` for primo
+- se `\(m\)` não for primo, há pelo menos uma classe `\(\bar{a}\)` não congruente a 1 módulo `\(m\)`
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+Garantida a possibilidade de decodificação, o receptor envia a chave pública (i.e. o par `\((n,e)\)`) ao emissor da mensagem para o processo de encriptação.
+
+&lt;br&gt;&lt;br&gt;
+
+`$$\text{TEORIA DOS NUMEROS} = 29\;14\;24\;27\;18\;10\;99\;13\;24\;28\;99\;23\;30\;22\;14\;27\;24\;28$$`
+
+&lt;br&gt;
+
+Para encriptar um bloco `\(b_i\)`, toma-se o resto da divisão de `\(b_i^e\)` por `\(n\)`, ou seja, `\(b_i^e\;(mod\;n)\)`. Supondo `\(p = 13\)`, `\(q = 17\)`, `\(n=p.q=221\)` e `\(e=5\)`, então:
+
+
+|        |    |    |    |   |   |    |
+|:-------|:---|:---|:---|:--|:--|:---|
+|letras  |T   |E   |O   |R  |I  |A   |
+|numeros |139 |131 |215 |40 |18 |108 |
 
 ---
   
 ## Implementação de Algoritmo de Chave Assimétrica
 
-&lt;ol start=2&gt;
-&lt;li&gt; escolhe outro número primo `\(e\)`, tal que `\(3&lt; e &lt; n-1\)`
+O emissor então envia a mensagem encriptada ao receptor que, de posse da chave privada, (i.e. o par `\((n, d)\)`), sendo `\(d=(e \;mod \;\phi(n))^{-1}\)` é o único capaz de decriptar os blocos `\(a_i\)`.
 
+`$$a_i = 139\;131\;215\;40\;18\;108$$`
+
+Para decriptar um bloco `\(a_i\)`, toma-se o resto da divisão de `\(a_i^d\)` por `\(n\)`, ou seja, `\(a_i^d\;(mod\;n)\)`. Calculando `\(\phi(n)\)`:
+
+`$$\phi(n) = (p-1)(q-1) = (13-1).(17-1) = 192$$`
+
+E podemos calcular a inversa de `\(5 \;(mod\;192)\)` aplicando o algoritmo euclidiano estendido, chegando a:
+
+`$$192.(-2)+5.77=1$$`
+
+concluindo que `\(5.77 \equiv 1 \;(mod \;192)\)` e obtendo `\(d=(5 \;mod \;192)^{-1} = 77\)`.
+
+Por fim, podemos calcular `\(a_1 = 139^{77} \;(mod\;221) = 29 = T\)`
+
+---
+  
+## Implementação de Algoritmo de Chave Assimétrica
+
+De forma programática:
 
 ```r
-library(openssl)
+encriptar = function(mensagem, p, q, e) {
+  
+  if (!is.character(c(mensagem, p, q, e))) {
+    stop("os argumentos devem ser caracteres")
+  }
 
-p = bignum("883")
-q = bignum("991")
-n = p * q
+  p = openssl::bignum(p)
+  q = openssl::bignum(q)
 
-e = bignum("65537")
+  # chave pública
+  n = p * q
+  e = openssl::bignum(e)
+  print(
+    paste(
+      "chave pública: n =", n,
+      "e =", e
+    )
+  )
+
+  euler = (p - 1) * (q - 1)
+
+  # chave privada
+  d = openssl::bignum_mod_inv(e, euler)
+  print(paste("chave privada:", d))
+
+  # encriptar: mensagem^e %% n = 1
+  mensagem = openssl::bignum(charToRaw(mensagem))
+  mensagem_encriptada = openssl::bignum_mod_exp(mensagem, e, n)
+  mensagem_base64 = openssl::base64_encode(mensagem_encriptada)
+
+  print(paste("mensagem:", mensagem_base64))
+}
+
+decriptar = function(mensagem, d, n) {
+  if (!is.character(c(mensagem, d, n))) {
+    stop("os argumentos devem ser caracteres")
+  }
+
+  d = openssl::bignum(d)
+  n = openssl::bignum(n)
+
+  # tranformar de binário-texto para número
+  c = openssl::bignum(openssl::base64_decode(mensagem))
+
+  # decriptar
+  m = openssl::bignum_mod_exp(c, d, n)
+  m = rawToChar(m)
+  print(m)
+}
 ```
 
 ---
+
+## Implementação de Algoritmo de Chave Assimétrica
+
+**Exemplo de encriptação de mensagem**
+
+```r
+encriptar(
+  mensagem = "demorei maior tempão pra entender essa parada",
+  p = "112481050639317229656723018120659623829736571015511322021617837187076258724819",
+  q = "89185111938335771293328323333111422985697062149139368049232365065924632677343",
+  e = "65537"
+)
+```
+
+```
+## [1] "chave pública: n = 10031635092209121498674987861649022163771061565130441373555584537047455688991931937563110507506652959265182705476941444174840580049331773111276155053075917 e = 65537"
+## [1] "chave privada: 6886694454027199678759881881737814611139109676622117091683160716943132564863007715345245794849719693156483947830169207322284232384798025277322134502462181"
+## [1] "mensagem: P26Dr9AhfkSkweOaW/8GAGsJaKlEzCAIUwPs3/X1kolRrzqWdop/wNKHM1g3sZzmQXboH7hfE02ZfAGG6WvHog=="
+```
+
+---
+
+## Implementação de Algoritmo de Chave Assimétrica
+
+**Exemplo de decriptação de mensagem**
+
+```r
+decriptar(
+  mensagem = "P26Dr9AhfkSkweOaW/8GAGsJaKlEzCAIUwPs3/X1kolRrzqWdop/wNKHM1g3sZzmQXboH7hfE02ZfAGG6WvHog==",
+  d = "6886694454027199678759881881737814611139109676622117091683160716943132564863007715345245794849719693156483947830169207322284232384798025277322134502462181",
+  n = "10031635092209121498674987861649022163771061565130441373555584537047455688991931937563110507506652959265182705476941444174840580049331773111276155053075917"
+)
+```
+
+```
+## [1] "demorei maior tempão pra entender essa parada"
+```
+
+---
+  
+## Referências
+
+Hefez, Abramo (1993). _Curso de Algebra_. Vol. 1. Instituto de Matematica Pura e Aplicada, CNPq, p. 226.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

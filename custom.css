@@ -100,7 +100,7 @@ a, a > code {
   }
   
   /*~~~~~~~~~~~~~~*/
-  /*   Banestes   */
+  /*   IFES   */
   /*~~~~~~~~~~~~~~*/
   
   /* Title slide */
@@ -286,4 +286,10 @@ a, a > code {
     color: #fff;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
+  }
+
+  /* pre */
+  pre {
+    overflow-y: scroll;
+    max-height: 13em;
   }
