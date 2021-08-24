@@ -7,6 +7,7 @@ date: '`r Sys.Date()`'
 output:
   xaringan::moon_reader:
     css: ["xaringan-themer.css", "custom.css"]
+    self_contained: true
     nature:
       slideNumberFormat: "%current%"
       highlightStyle: github
